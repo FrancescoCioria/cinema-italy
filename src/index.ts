@@ -47,11 +47,12 @@ function getMovies(body: AxiosResponse): Movie[] {
 
     const schedules = $(el).find('tr[style]').map((_, el) => {
       const cinema = $(el).find('td:first-child > a').text();
+      const city = $(el).find('td:first-child > span').text().replace('Versione originale', '');
       const schedule = $(el).find('td:nth-child(2)').text();
       const ov = $(el).find('td:first-child').text().toLowerCase().trim().includes('versione originale');
 
       return {
-        cinema,
+        cinema: `${cinema} (${city})`,
         schedule,
         ov
       }

@@ -1,13 +1,19 @@
 import axios, { AxiosResponse } from 'axios';
 import * as cheerio from 'cheerio';
 import * as minimist from 'minimist';
+import flatten = require('lodash/flatten');
+import groupBy = require('lodash/groupBy');
 
-const BASE_URL = 'http://www.mymovies.it/cinema/milano/';
+const urls = [
+  'http://www.mymovies.it/cinema/milano/',
+  'http://www.mymovies.it/cinema/milano/provincia'
+]
 
 const argv: {
   _: string[],
-  ov: boolean
-} = minimist(process.argv.slice(2));
+  ov: boolean,
+  cinema: boolean
+} = minimist(process.argv.slice(2)) as any;
 
 type Movie = {
   title: string,
@@ -19,6 +25,17 @@ type Schedule = {
   cinema: string,
   schedule: string[],
   ov: boolean
+}
+
+type CinemaMovie = {
+  schedule: string[],
+  ov: boolean,
+  title: string,
+  cinema: string
+}
+
+type CinemasMap = {
+  [k: string]: CinemaMovie[]
 }
 
 function getMovies(body: AxiosResponse): Movie[] {
@@ -54,21 +71,37 @@ function getSectionTitle(title: string): string {
   return `${dashes}\n${title}\n${dashes}`
 }
 
-function printByMovie(movies: Movie[]): void {
-  movies.forEach(m => {
-    console.log(`\n${getSectionTitle(m.title)}`);
-
-    m.schedules.forEach(s => {
-      console.log(`  ${s.ov ? '(O.V.) ' : ''}${s.cinema}:  ${s.schedule}`);
-    });
-
-  });
+function filterMovie(movies: Movie[]): Movie[] {
+  const query = argv._.join(' ');
+  return movies
+    .filter(m => query || m.title.toLowerCase().includes(query))
 }
 
-function filter(movies: Movie[]): Movie[] {
+function filterCinema(movies: Movie[]): Movie[] {
+  const query = argv._.join(' ');
   return movies
-    .filter(m => argv._.length === 0 || m.title.toLowerCase().includes(argv._[0]))
-    .filter(m => !argv.ov || !!m.schedules.find(s => s.ov))
+    .filter(m => query || m.schedules.find(s => s.cinema.toLowerCase().includes(query)))
+    .map(m => {
+      if (query) {
+        return {
+          ...m,
+          schedules: m.schedules.filter(s => s.cinema.toLowerCase().includes(argv._[0]))
+        }
+      }
+      return m;
+    })
+}
+
+function filterByFreeText(movies: Movie[]): Movie[] {
+  if (argv.cinema) {
+    return filterCinema(movies);
+  } else {
+    return filterMovie(movies);
+  }
+}
+
+function filterOV(movies: Movie[]): Movie[] {
+  return movies.filter(m => !argv.ov || !!m.schedules.find(s => s.ov))
     .map(m => {
       if (argv.ov) {
         return {
@@ -80,11 +113,40 @@ function filter(movies: Movie[]): Movie[] {
     })
 }
 
-axios.get(BASE_URL)
-  .then(getMovies)
-  .then(filter)
-  .then(printByMovie)
-  // .then(cinemas => Promise.all(cinemas.map(getPages)))
-  // .then(cinemas => cinemas.map(getMovies))
-  // .then(logResults)
-  // .catch(e => console.log(e));
+function printByMovie(movies: Movie[]): void {
+  movies.forEach(m => {
+    console.log(`\n${getSectionTitle(m.title)}`);
+
+    m.schedules.forEach(s => {
+      console.log(`  ${s.ov ? '(O.V.) ' : ''}${s.cinema}:  ${s.schedule}`);
+    });
+
+  });
+}
+
+function printByCinema(movies: Movie[]): void {
+  const schedules: CinemaMovie[] = flatten(movies.map(m => m.schedules.map(s => ({ title: m.title, ...s }))));
+  const cinemasMap: CinemasMap = groupBy(schedules, s => s.cinema);
+
+  Object.keys(cinemasMap).forEach(cinema => {
+    console.log(`\n${getSectionTitle(cinema)}`);
+
+    cinemasMap[cinema].forEach(cinemaMovie => {
+      console.log(`  ${cinemaMovie.ov ? '(O.V.) ' : ''}${cinemaMovie.title}:  ${cinemaMovie.schedule}`);
+    });
+  });
+}
+
+function print(movies: Movie[]): void {
+  if (argv.cinema) {
+    printByCinema(movies);
+  } else {
+    printByMovie(movies);
+  }
+}
+
+Promise.all(urls.map((url) => axios.get(url)))
+  .then((res: AxiosResponse[]) => res.map(getMovies).reduce((acc, movies) => acc.concat(movies)))
+  .then(filterByFreeText)
+  .then(filterOV)
+  .then(print)

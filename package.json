@@ -22,13 +22,13 @@
     "@types/minimist": "^1.2.0",
     "axios": "^0.18.0",
     "cheerio": "^1.0.0-rc.2",
-    "lodash-es": "^4.17.8",
+    "lodash": "^4.17.5",
     "minimist": "^1.2.0"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "@types/cheerio": "^0.22.7",
-    "@types/lodash-es": "^4.17.0",
+    "@types/lodash": "^4.14.106",
     "@types/node": "^9.6.2",
     "ts-node": "^5.0.1",
     "typescript": "^2.8.1"

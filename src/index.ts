@@ -4,16 +4,17 @@ import * as minimist from 'minimist';
 import flatten = require('lodash/flatten');
 import groupBy = require('lodash/groupBy');
 
-const urls = [
-  'http://www.mymovies.it/cinema/milano/',
-  'http://www.mymovies.it/cinema/milano/provincia'
-]
-
 const argv: {
   _: string[],
-  ov: boolean,
-  cinema: boolean
+  ov?: boolean,
+  cinema?: boolean,
+  city?: string
 } = minimist(process.argv.slice(2)) as any;
+
+const urls = [
+  `http://www.mymovies.it/cinema/${argv.city || 'milano'}/`,
+  `http://www.mymovies.it/cinema/${argv.city || 'milano'}/provincia`
+]
 
 type Movie = {
   title: string,

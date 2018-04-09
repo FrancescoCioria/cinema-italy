@@ -73,13 +73,13 @@ function getMovies(body: AxiosResponse): Movie[] {
 function filterMovie(movies: Movie[]): Movie[] {
   const query = argv._.join(' ');
   return movies
-    .filter(m => query || m.title.toLowerCase().includes(query))
+    .filter(m => !query || m.title.toLowerCase().includes(query))
 }
 
 function filterCinema(movies: Movie[]): Movie[] {
   const query = argv._.join(' ');
   return movies
-    .filter(m => query || m.schedules.find(s => s.cinema.toLowerCase().includes(query)))
+    .filter(m => !query || m.schedules.find(s => s.cinema.toLowerCase().includes(query)))
     .map(m => {
       if (query) {
         return {

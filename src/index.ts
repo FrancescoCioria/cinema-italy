@@ -147,6 +147,11 @@ function printByCinema(movies: Movie[]): void {
 }
 
 function print(movies: Movie[]): void {
+  if (movies.length === 0) {
+    console.warn('\nNo movies found');
+    return;
+  }
+
   if (argv.cinema) {
     printByCinema(movies);
   } else {
@@ -165,3 +170,4 @@ Promise.all(urls.map((url) => axios.get(url)))
   .then(filterByFreeText)
   .then(filterOV)
   .then(print)
+  .then(() => console.log('\n'))

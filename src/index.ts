@@ -15,6 +15,11 @@ const argv: {
   city?: string
 } = minimist(process.argv.slice(2)) as any;
 
+console.info('\nFree text query:', `"${argv._.join(' ')}"`);
+console.info('Print cinemas:', !!argv.cinema);
+console.info('City:', argv.city || 'Milano');
+console.info('Only O.V.:', !!argv.ov);
+
 const urls = [
   `http://www.mymovies.it/cinema/${argv.city || 'milano'}/`,
   `http://www.mymovies.it/cinema/${argv.city || 'milano'}/provincia`

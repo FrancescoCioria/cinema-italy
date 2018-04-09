@@ -1,6 +1,10 @@
 # Cinema Italy 🇮🇹🎥
 CLI to list movies/cinemas schedules in Italy's cities.
 
+```sh
+npm i -g cinema-italy
+```
+
 ## Print movies schedule
 By default it prints the schedule of each movie showing in which cinemas and when they are playing:
 

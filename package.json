@@ -11,6 +11,9 @@
     "type": "git",
     "url": "git@github.com:buildo/cinema-italy"
   },
+  "bin": {
+    "cinema-italy": "./cinema-italy"
+  },
   "keywords": [],
   "author": "Francesco Cioria <francescocioria91@gmail.com>",
   "license": "ISC",

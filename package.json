@@ -1,7 +1,7 @@
 {
-  "name": "milano-cinema",
-  "version": "0.0.1",
-  "description": "",
+  "name": "cinema-italy",
+  "version": "1.0.0",
+  "description": "CLI to list movies and cinemas in Italy",
   "main": "lib",
   "scripts": {
     "build": "tsc",
@@ -9,17 +9,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:buildo/milano-cinema"
+    "url": "git@github.com:buildo/cinema-italy"
   },
   "keywords": [],
   "author": "Francesco Cioria <francescocioria91@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/buildo/milano-cinema/issues"
+    "url": "https://github.com/buildo/cinema-italy/issues"
   },
-  "homepage": "https://github.com/buildo/milano-cinema",
+  "homepage": "https://github.com/buildo/cinema-italy",
   "dependencies": {
-    "@types/minimist": "^1.2.0",
     "axios": "^0.18.0",
     "better-console": "^1.0.1",
     "cheerio": "^1.0.0-rc.2",
@@ -31,6 +30,7 @@
     "@types/axios": "^0.14.0",
     "@types/cheerio": "^0.22.7",
     "@types/lodash": "^4.14.106",
+    "@types/minimist": "^1.2.0",
     "@types/node": "^9.6.2",
     "ts-node": "^5.0.1",
     "typescript": "^2.8.1"

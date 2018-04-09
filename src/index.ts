@@ -3,6 +3,8 @@ import * as cheerio from 'cheerio';
 import * as minimist from 'minimist';
 import flatten = require('lodash/flatten');
 import groupBy = require('lodash/groupBy');
+import * as Table from 'cli-table';
+import * as console from 'better-console';
 
 const argv: {
   _: string[],
@@ -68,11 +70,6 @@ function getMovies(body: AxiosResponse): Movie[] {
   return movies;
 }
 
-function getSectionTitle(title: string): string {
-  const dashes = [...Array(title.length)].map(() => '-').join('');
-  return `${dashes}\n${title}\n${dashes}`
-}
-
 function filterMovie(movies: Movie[]): Movie[] {
   const query = argv._.join(' ');
   return movies
@@ -117,12 +114,13 @@ function filterOV(movies: Movie[]): Movie[] {
 
 function printByMovie(movies: Movie[]): void {
   movies.forEach(m => {
-    console.log(`\n${getSectionTitle(m.title)}`);
+    const table = new Table({
+      head: ['Cinema', 'Schedule']
+    })
+    m.schedules.forEach(s => table.push([s.cinema, s.schedule]))
 
-    m.schedules.forEach(s => {
-      console.log(`  ${s.ov ? '(O.V.) ' : ''}${s.cinema}:  ${s.schedule}`);
-    });
-
+    console.warn(`\n ${m.title.toUpperCase()}`);
+    console.log(table.toString());
   });
 }
 
@@ -131,11 +129,13 @@ function printByCinema(movies: Movie[]): void {
   const cinemasMap: CinemasMap = groupBy(schedules, s => s.cinema);
 
   Object.keys(cinemasMap).forEach(cinema => {
-    console.log(`\n${getSectionTitle(cinema)}`);
+    const table = new Table({
+      head: ['Movie', 'Schedule']
+    })
+    cinemasMap[cinema].forEach(m => table.push([m.title, m.schedule]))
 
-    cinemasMap[cinema].forEach(cinemaMovie => {
-      console.log(`  ${cinemaMovie.ov ? '(O.V.) ' : ''}${cinemaMovie.title}:  ${cinemaMovie.schedule}`);
-    });
+    console.warn(`\n ${cinema.toUpperCase()}`);
+    console.log(table.toString());
   });
 }
 

@@ -3,6 +3,8 @@ import * as cheerio from 'cheerio';
 import * as minimist from 'minimist';
 import flatten = require('lodash/flatten');
 import groupBy = require('lodash/groupBy');
+import values = require('lodash/values');
+import mapValues = require('lodash/mapValues');
 import * as Table from 'cli-table';
 import * as console from 'better-console';
 
@@ -148,7 +150,13 @@ function print(movies: Movie[]): void {
 }
 
 Promise.all(urls.map((url) => axios.get(url)))
+  // concat pages results
   .then((res: AxiosResponse[]) => res.map(getMovies).reduce((acc, movies) => acc.concat(movies)))
+  // group same movies from different pages
+  .then(movies => values(mapValues(
+    groupBy(movies, m => m.title),
+    ms => ms.reduce((acc, m) => ({ ...acc, schedules: acc.schedules.concat(m.schedules) }))
+  )))
   .then(filterByFreeText)
   .then(filterOV)
   .then(print)

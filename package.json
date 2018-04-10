@@ -1,6 +1,6 @@
 {
   "name": "cinema-italy",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "CLI to list movies and cinemas in Italy",
   "main": "lib",
   "scripts": {

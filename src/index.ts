@@ -4,6 +4,7 @@ import * as minimist from 'minimist';
 import flatten = require('lodash/flatten');
 import groupBy = require('lodash/groupBy');
 import values = require('lodash/values');
+import sortBy = require('lodash/sortBy');
 import mapValues = require('lodash/mapValues');
 import * as Table from 'cli-table';
 import * as console from 'better-console';
@@ -131,7 +132,7 @@ function printByMovie(movies: Movie[]): void {
     const table = new Table({
       head: ['Cinema', 'Schedule']
     })
-    m.schedules.forEach(s => table.push([(s.ov ? '(O.V.) ' : '') + s.cinema, s.schedule]))
+    sortBy(m.schedules, 'schedule').forEach(s => table.push([(s.ov ? '(O.V.) ' : '') + s.cinema, s.schedule]))
 
     console.warn(`\n ${m.title.toUpperCase()}`);
     console.log(table.toString());
@@ -146,7 +147,7 @@ function printByCinema(movies: Movie[]): void {
     const table = new Table({
       head: ['Movie', 'Schedule']
     })
-    cinemasMap[cinema].forEach(m => table.push([(m.ov ? '(O.V.) ' : '') + m.title, m.schedule]))
+    sortBy(cinemasMap[cinema], 'schedule').forEach(m => table.push([(m.ov ? '(O.V.) ' : '') + m.title, m.schedule]))
 
     console.warn(`\n ${cinema.toUpperCase()}`);
     console.log(table.toString());

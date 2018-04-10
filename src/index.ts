@@ -124,7 +124,7 @@ function printByMovie(movies: Movie[]): void {
     const table = new Table({
       head: ['Cinema', 'Schedule']
     })
-    m.schedules.forEach(s => table.push([s.cinema, s.schedule]))
+    m.schedules.forEach(s => table.push([(s.ov ? '(O.V.) ' : '') + s.cinema, s.schedule]))
 
     console.warn(`\n ${m.title.toUpperCase()}`);
     console.log(table.toString());
@@ -139,7 +139,7 @@ function printByCinema(movies: Movie[]): void {
     const table = new Table({
       head: ['Movie', 'Schedule']
     })
-    cinemasMap[cinema].forEach(m => table.push([m.title, m.schedule]))
+    cinemasMap[cinema].forEach(m => table.push([(m.ov ? '(O.V.) ' : '') + m.title, m.schedule]))
 
     console.warn(`\n ${cinema.toUpperCase()}`);
     console.log(table.toString());

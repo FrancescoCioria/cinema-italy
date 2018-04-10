@@ -12,8 +12,15 @@ const argv: {
   _: string[],
   ov?: boolean,
   cinema?: boolean,
-  city?: string
+  city?: string,
+  v?: boolean,
+  version?: boolean
 } = minimist(process.argv.slice(2)) as any;
+
+if (argv.v || argv.version) {
+  console.log(require('../package.json').version);
+  process.exit(0);
+}
 
 console.info('\nFree text query:', `"${argv._.join(' ')}"`);
 console.info('Print cinemas:', !!argv.cinema);

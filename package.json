@@ -4,9 +4,9 @@
   "description": "CLI to list movies and cinemas in Italy",
   "main": "lib",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf lib && tsc",
     "start": "ts-node src",
-    "prepublish": "yarn build",
+    "prepublish": "npm run build",
     "release-version": "smooth-release patch --validations --npm-version --npm-publish"
   },
   "repository": {

@@ -135,7 +135,7 @@ function printByMovie(movies: Movie[]): void {
     })
     sortBy(m.schedules, 'schedule').forEach(s => table.push([(s.ov ? '(O.V.) ' : '') + s.cinema, s.schedule]))
 
-    console.warn(`\n ${m.title.toUpperCase()}`);
+    console.warn(`\n ${m.title.toUpperCase()} (imdb.com/find?q=${m.title.split(' ').join('+')})`);
     console.log(table.toString());
   });
 }
@@ -150,7 +150,7 @@ function printByCinema(movies: Movie[]): void {
     })
     sortBy(cinemasMap[cinema], 'schedule').forEach(m => table.push([(m.ov ? '(O.V.) ' : '') + m.title, m.schedule]))
 
-    console.warn(`\n ${cinema.toUpperCase()}`);
+    console.warn(`\n ${cinema.toUpperCase()} (google.it/maps/search/${cinema.split(' ').join('+').replace(/[()]/g, '')})`);
     console.log(table.toString());
   });
 }

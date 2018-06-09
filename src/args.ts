@@ -5,6 +5,7 @@ const optionDefinitions = {
   ov: { type: Boolean, defaultValue: false, description: 'List only movies projected in original version' },
   cinema: { type: Boolean, defaultValue: false, description: 'Group results by cinema instead of by movie' },
   city: { type: String, defaultValue: 'milano', description: 'Search movies in this city' },
+  links: { type: Boolean, defaultValue: false, description: 'Print link to quickly search on internet for movie/cinema in its header' },
   version: { alias: 'v', type: Boolean, description: 'Print the current version of this CLI.' },
   help: { alias: 'h', type: Boolean, description: 'Print this usage guide.' }
 }

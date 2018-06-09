@@ -28,7 +28,8 @@ console.info(`
 Free text query: "${freeTextQuery}"
 Group by: ${args.cinema ? 'Cinema' : 'Movie'}
 City: ${capitalize(args.city)}
-Only movies projected in original version: ${args.ov}
+Only movies played in original language: ${args.ov}
+Print links: ${args.links}
 `);
 
 const urls = [

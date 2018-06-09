@@ -5,18 +5,28 @@ import flatten = require('lodash/flatten');
 import groupBy = require('lodash/groupBy');
 import values = require('lodash/values');
 import sortBy = require('lodash/sortBy');
+import capitalize = require('lodash/capitalize');
 import mapValues = require('lodash/mapValues');
 import * as Table from 'cli-table';
 import * as console from 'better-console';
 
-const argv: {
+type Argv = {
   _: string[],
   ov?: boolean,
   cinema?: boolean,
   city?: string,
   v?: boolean,
   version?: boolean
-} = minimist(process.argv.slice(2)) as any;
+};
+
+const defaultArgv = {
+  city: 'milano'
+};
+
+const argv: Argv = {
+  ...defaultArgv,
+  ...minimist(process.argv.slice(2)) as Argv
+}
 
 if (argv.v || argv.version) {
   console.log(require('../package.json').version);
@@ -25,12 +35,12 @@ if (argv.v || argv.version) {
 
 console.info('\nFree text query:', `"${argv._.join(' ')}"`);
 console.info('Print cinemas:', !!argv.cinema);
-console.info('City:', argv.city || 'Milano');
+console.info('City:', capitalize(argv.city));
 console.info('Only O.V.:', !!argv.ov);
 
 const urls = [
-  `http://www.mymovies.it/cinema/${argv.city || 'milano'}/`,
-  `http://www.mymovies.it/cinema/${argv.city || 'milano'}/provincia`
+  `http://www.mymovies.it/cinema/${argv.city}/`,
+  `http://www.mymovies.it/cinema/${argv.city}/provincia`
 ]
 
 type Movie = {

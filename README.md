@@ -1,4 +1,4 @@
-# Cinema Italy 🇮🇹🎥
+# 🎥 Cinema Italy 🇮🇹
 CLI to list movies/cinemas schedules in Italy's cities.
 
 ```sh
@@ -34,3 +34,7 @@ The main argument is treated as full text query and used to filter the movies (c
 
 ### Original Version
 Finding a movie not dubbed in Italy is hard... pass the `--ov` boolean arg to show only the movies played in the original language.
+
+## Add links to movies/cinemas
+Pass `--links` to print beside each movie/cinema header a link to quickly search for it on internet.
+Movies will be searched on IMDB, while cinems on Google Maps.

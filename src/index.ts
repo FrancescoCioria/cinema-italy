@@ -1,6 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
 import * as cheerio from 'cheerio';
-import * as minimist from 'minimist';
 import flatten = require('lodash/flatten');
 import groupBy = require('lodash/groupBy');
 import values = require('lodash/values');
@@ -9,38 +8,32 @@ import capitalize = require('lodash/capitalize');
 import mapValues = require('lodash/mapValues');
 import * as Table from 'cli-table';
 import * as console from 'better-console';
+import { parseArgs, printUsageGuide } from './args';
 
-type Argv = {
-  _: string[],
-  ov?: boolean,
-  cinema?: boolean,
-  city?: string,
-  v?: boolean,
-  version?: boolean
-};
+const args = parseArgs();
 
-const defaultArgv = {
-  city: 'milano'
-};
+const freeTextQuery = (args._unknown || []).join(' ');
 
-const argv: Argv = {
-  ...defaultArgv,
-  ...minimist(process.argv.slice(2)) as Argv
-}
-
-if (argv.v || argv.version) {
+if (args.version) {
   console.log(require('../package.json').version);
   process.exit(0);
 }
 
-console.info('\nFree text query:', `"${argv._.join(' ')}"`);
-console.info('Print cinemas:', !!argv.cinema);
-console.info('City:', capitalize(argv.city));
-console.info('Only O.V.:', !!argv.ov);
+if (args.help) {
+  console.log(printUsageGuide());
+  process.exit(0);
+}
+
+console.info(`
+Free text query: "${freeTextQuery}"
+Group by: ${args.cinema ? 'Cinema' : 'Movie'}
+City: ${capitalize(args.city)}
+Only movies projected in original version: ${args.ov}
+`);
 
 const urls = [
-  `http://www.mymovies.it/cinema/${argv.city}/`,
-  `http://www.mymovies.it/cinema/${argv.city}/provincia`
+  `http://www.mymovies.it/cinema/${args.city}/`,
+  `http://www.mymovies.it/cinema/${args.city}/provincia`
 ]
 
 type Movie = {
@@ -96,20 +89,18 @@ function getMovies(body: AxiosResponse): Movie[] {
 }
 
 function filterMovie(movies: Movie[]): Movie[] {
-  const query = argv._.join(' ');
   return movies
-    .filter(m => !query || m.title.toLowerCase().includes(query))
+    .filter(m => !freeTextQuery || m.title.toLowerCase().includes(freeTextQuery))
 }
 
 function filterCinema(movies: Movie[]): Movie[] {
-  const query = argv._.join(' ');
   return movies
-    .filter(m => !query || m.schedules.find(s => s.cinema.toLowerCase().includes(query)))
+    .filter(m => !freeTextQuery || m.schedules.find(s => s.cinema.toLowerCase().includes(freeTextQuery)))
     .map(m => {
-      if (query) {
+      if (freeTextQuery) {
         return {
           ...m,
-          schedules: m.schedules.filter(s => s.cinema.toLowerCase().includes(argv._[0]))
+          schedules: m.schedules.filter(s => s.cinema.toLowerCase().includes(freeTextQuery[0]))
         }
       }
       return m;
@@ -117,7 +108,7 @@ function filterCinema(movies: Movie[]): Movie[] {
 }
 
 function filterByFreeText(movies: Movie[]): Movie[] {
-  if (argv.cinema) {
+  if (args.cinema) {
     return filterCinema(movies);
   } else {
     return filterMovie(movies);
@@ -125,9 +116,9 @@ function filterByFreeText(movies: Movie[]): Movie[] {
 }
 
 function filterOV(movies: Movie[]): Movie[] {
-  return movies.filter(m => !argv.ov || !!m.schedules.find(s => s.ov))
+  return movies.filter(m => !args.ov || !!m.schedules.find(s => s.ov))
     .map(m => {
-      if (argv.ov) {
+      if (args.ov) {
         return {
           ...m,
           schedules: m.schedules.filter(s => s.ov)
@@ -170,7 +161,7 @@ function print(movies: Movie[]): void {
     return;
   }
 
-  if (argv.cinema) {
+  if (args.cinema) {
     printByCinema(movies);
   } else {
     printByMovie(movies);
